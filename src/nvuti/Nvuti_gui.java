@@ -52,13 +52,17 @@ public class Nvuti_gui implements ActionListener {
 	JLabel border_less = new JLabel("0-899999");
 	JLabel border_more = new JLabel("100000-999999");
 	JLabel guess_label = new JLabel("\u0421\u043B\u0435\u0434. \u0437\u0430\u0433\u0430\u0434\u0430\u043D\u043E");
-	JLabel bet_double = new JLabel("�������"), bet_half = new JLabel("��������"), bet_max = new JLabel("����"), bet_min = new JLabel("���");
-	JLabel perc_double = new JLabel("�������"), perc_half = new JLabel("��������"), perc_max = new JLabel("����"), perc_min = new JLabel("���");
+	JLabel bet_double = new JLabel("Удвоить"), bet_half = new JLabel("Половина"), bet_max = new JLabel("Макс"), bet_min = new JLabel("Мин");
+	JLabel perc_double = new JLabel("Удвоить"), perc_half = new JLabel("Половина"), perc_max = new JLabel("Макс"), perc_min = new JLabel("Мин");
 	JLabel guess_ghost = new JLabel("                         ");
 	JLabel guess_label_ghost = new JLabel("              ?      ");
+	int sequence_win = 0, sequence_lose = 0;
+	JLabel sequence_lbl = new JLabel("Серия проигрышей - " + sequence_lose);
+	JLabel probability = new JLabel("Шанс выигрыша " + percent.getText());
 	
-	JButton less_button = new JButton("������");
-	JButton more_button = new JButton("������");
+	
+	JButton less_button = new JButton("Меньше");
+	JButton more_button = new JButton("Больше");
 
 	boolean guess_visible = false;
 	boolean supply_visible = false;
@@ -103,21 +107,21 @@ public class Nvuti_gui implements ActionListener {
 		panel.setBounds(0, 0, 700, 500);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
 		
-		JLabel balance_label = new JLabel("������");
+		JLabel balance_label = new JLabel("Баланс");
 		balance_label.setHorizontalAlignment(JLabel.CENTER);
 		balance_label.setFont(new Font("Verdana", Font.BOLD, 16));
 		balance_label.setForeground(Color.WHITE);
 		balance_label.setBounds(22, 155, 70, 16);
 		frame.getContentPane().add(balance_label);
 
-		JLabel bet_label = new JLabel("������");
+		JLabel bet_label = new JLabel("Ставка");
 //		bet_label.setHorizontalAlignment(JLabel.CENTER);
 		bet_label.setFont(new Font("Verdana", Font.BOLD, 16));
 		bet_label.setForeground(Color.WHITE);
 		bet_label.setBounds(22, 13, 70, 16);
 		frame.getContentPane().add(bet_label);
 
-		JLabel percent_label = new JLabel("�������");
+		JLabel percent_label = new JLabel("Процент");
 //		percent_label.setHorizontalAlignment(JLabel.CENTER);
 		percent_label.setFont(new Font("Verdana", Font.BOLD, 16));
 		percent_label.setForeground(Color.WHITE);
@@ -265,6 +269,7 @@ public class Nvuti_gui implements ActionListener {
 				if(Double.parseDouble(percent.getText())*2 <= 95) {
 					percent.setText(Double.toString(Double.parseDouble(percent.getText())*2));
 					updatePerc();
+					
 				}
 			}
 		});
@@ -343,7 +348,7 @@ public class Nvuti_gui implements ActionListener {
 		indicator.setOpaque(true);
 		indicator.setVisible(false);
 		
-		JLabel supply_label = new JLabel("���������");
+		JLabel supply_label = new JLabel("Пополнить");
 		supply_label.setBounds(22, 210, 63, 16);
 		supply_label.setHorizontalAlignment(SwingConstants.CENTER);
 		supply_label.setFont(new Font("Calibri", Font.PLAIN, 12));
@@ -377,34 +382,47 @@ public class Nvuti_gui implements ActionListener {
 		
 		frame.getContentPane().setBackground(Color.BLUE);		
 		frame.getContentPane().add(panel);
-				guess_label.setBounds(373, 13, 110, 16);
-				panel.add(guess_label);
+		guess_label.setBounds(373, 13, 110, 16);
+		panel.add(guess_label);
 		
-		//		guess_label.setHorizontalAlignment(JLabel.CENTER);
-				guess_label.setFont(new Font("Verdana", Font.BOLD, 12));
-				guess_label.setForeground(Color.WHITE);
-						guess_label_ghost.setBounds(417, 14, 90, 16);
-						panel.add(guess_label_ghost);
-				
-				//		guess_label_ghost.setHorizontalAlignment(JLabel.CENTER);
-						guess_label_ghost.setForeground(Color.WHITE);
-						guess_label_ghost.addMouseListener(new MouseAdapter() {
-							@Override
-							public void mouseReleased(MouseEvent e) {
-								if (!guess_visible) {
-									guess_label.setVisible(true);
-									guess.setVisible(true);
-									guess_visible = true;
-									guess_label_ghost.setText("                         ");
-								} else {
-									guess_label.setVisible(false);
-									guess.setVisible(false);
-									guess_visible = false;
-									guess_label_ghost.setText("              ?           ");
-								}
-							}
-						});
-				guess_label.setVisible(false);
+//		guess_label.setHorizontalAlignment(JLabel.CENTER);
+		guess_label.setFont(new Font("Verdana", Font.BOLD, 12));
+		guess_label.setForeground(Color.WHITE);
+		guess_label_ghost.setBounds(417, 14, 90, 16);
+		panel.add(guess_label_ghost);
+
+//		guess_label_ghost.setHorizontalAlignment(JLabel.CENTER);
+		guess_label_ghost.setForeground(Color.WHITE);
+		
+		sequence_lbl.setFont(new Font("Verdana", Font.BOLD, 12));
+		sequence_lbl.setForeground(Color.WHITE);
+		sequence_lbl.setBounds(100, 201, 200, 16);
+		panel.add(sequence_lbl);
+
+		probability.setFont(new Font("Verdana", Font.BOLD, 12));
+		probability.setForeground(Color.WHITE);
+		probability.setBounds(100, 224, 200, 16);
+		panel.add(probability);
+		
+		guess_label_ghost.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (!guess_visible) {
+					guess_label.setVisible(true);
+					guess.setVisible(true);
+					guess_visible = true;
+					guess_label_ghost.setText("                         ");
+				} else {
+					guess_label.setVisible(false);
+					guess.setVisible(false);
+					guess_visible = false;
+					guess_label_ghost.setText("              ?           ");
+				}
+			}
+		});
+		guess_label.setVisible(false);
+		
+		
 
 		frame.setResizable(true);
 		frame.setAlwaysOnTop(false);
@@ -435,6 +453,10 @@ public class Nvuti_gui implements ActionListener {
 				}
 			}
 		});
+	}
+	
+	void probability_clear() {
+		
 	}
 
 	void updateBet() {
@@ -509,6 +531,20 @@ public class Nvuti_gui implements ActionListener {
 		guess.setText(Integer.toString(guessed));
 
 		win_amount.setText(df.format(bet / perc));
+		
+		if(sequence_win >= 0) {
+			sequence_win = 0;
+			sequence_lbl.setText("Серия выигрышей - " + sequence_win);
+			probability.setText("Шанс проигрыша - " + Math.round((1 - perc) * 100));
+		}
+		else
+		{
+			if(sequence_lose >= 0) {
+				sequence_lose = 0;
+				sequence_lbl.setText("Серия проигрышей - " + sequence_win);
+				probability.setText("Шанс выигрыша - " + Math.round(perc * 100));
+			}
+		}
 	}
 
 	Random random = new Random();
@@ -550,11 +586,24 @@ public class Nvuti_gui implements ActionListener {
 					MyThread myThread = new MyThread();
 				    myThread.start();
 					
+				    double prob;
 					if ((min + guessed) <= less) {
 						tot_amount += bet / perc;
 						indicator.setBackground(Color.GREEN);
+						sequence_win++;
+						sequence_lose = 0;
+						sequence_lbl.setText("Серия выигрышей - " + sequence_win);
+						prob = Math.round(100 - (Math.pow((perc), sequence_win+1))*100);
+						probability.setText("Шанс проигрыша - " + prob);
+						System.out.println("100 - pow(" + perc + ", " + (sequence_win+1) + ") * 100 = " + prob);
 					} else {
 						indicator.setBackground(Color.RED);
+						sequence_lose++;
+						sequence_win = 0;
+						sequence_lbl.setText("Серия проигрышей - " + sequence_lose);
+						prob = Math.round(100 - (Math.pow((1 - perc), sequence_lose+1))*100);
+						probability.setText("Шанс выигрыша - " + prob);
+						System.out.println("100 - pow(1 - " + perc + ", " + (sequence_lose+1) + ") * 100 = " + prob);
 					}
 					
 					indicator.setText(Integer.toString(prev_guessed));
@@ -571,11 +620,25 @@ public class Nvuti_gui implements ActionListener {
 						MyThread myThread = new MyThread();
 					    myThread.start();
 						
+					    
+					    double prob;
 						if ((min + guessed) >= more) {
 							tot_amount += bet / perc;
 							indicator.setBackground(Color.GREEN);
+							sequence_win++;
+							sequence_lose = 0;
+							sequence_lbl.setText("Серия выигрышей - " + sequence_win);
+							prob = Math.round(100 - (Math.pow((perc), sequence_win+1))*100);
+							probability.setText("Шанс проигрыша - " + prob);
+							System.out.println("100 - pow(" + perc + ", " + (sequence_win+1) + ") * 100 = " + prob);
 						} else {
 							indicator.setBackground(Color.RED);
+							sequence_lose++;
+							sequence_win = 0;
+							sequence_lbl.setText("Серия проигрышей - " + sequence_lose);
+							prob = Math.round(100 - (Math.pow((1 - perc), sequence_lose+1))*100);
+							probability.setText("Шанс выигрыша - " + prob);
+							System.out.println("100 - pow(1 - " + perc + ", " + (sequence_lose+1) + ") * 100 = " + prob);
 						}
 						
 						indicator.setText(Integer.toString(prev_guessed));
@@ -597,7 +660,6 @@ public class Nvuti_gui implements ActionListener {
 				Thread.sleep(200);
 				indicator.setVisible(true);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }
